@@ -76,7 +76,9 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-function utilizationLevel(value) {
+function utilizationLevel(value, tierName) {
+  // 周用量大于 80% 标红
+  if (tierName === "weekly_limit" && value > 80) return "high";
   if (value >= 90) return "high";
   if (value >= 70) return "medium";
   return "low";
@@ -476,7 +478,7 @@ function renderTiers(container, quota) {
   }
 
   for (const tier of quota.tiers) {
-    const level = utilizationLevel(tier.utilization);
+    const level = utilizationLevel(tier.utilization, tier.name);
     const resetText = formatResetTime(tier.resetsAt);
     const counts = tier.counts;
 
