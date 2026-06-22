@@ -15,11 +15,11 @@
 
     <main class="card">
       <div class="tabs" role="tablist">
-        <button type="button" class="tab active" data-tab="single" role="tab" aria-selected="true">单个查询</button>
-        <button type="button" class="tab" data-tab="batch" role="tab" aria-selected="false">批量查询</button>
+        <button type="button" class="tab" data-tab="single" role="tab" aria-selected="false">单个查询</button>
+        <button type="button" class="tab active" data-tab="batch" role="tab" aria-selected="true">批量查询</button>
       </div>
 
-      <section id="single-panel" class="tab-panel active">
+      <section id="single-panel" class="tab-panel">
         <form id="query-form" class="form">
           <div class="field-group">
             <label for="provider">供应商</label>
@@ -85,7 +85,7 @@
         </div>
       </section>
 
-      <section id="batch-panel" class="tab-panel">
+      <section id="batch-panel" class="tab-panel active">
         <div id="auto-config-status" class="auto-config-status hidden"></div>
 
         <form id="batch-form" class="form">
