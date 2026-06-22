@@ -159,12 +159,20 @@ function parseGlmQuota(body) {
   if (!Array.isArray(limits)) throw new Error("响应中缺少 limits 数组");
 
   const tiers = [];
+  let tokensLimitCount = 0;
+
   for (const item of limits) {
-    const name = mapTierName(item.type);
-    if (!name) continue;
+    const limitType = String(item.type || "").toUpperCase();
+    if (limitType !== "TOKENS_LIMIT") continue;
+
     const utilization = typeof item.percentage === "number" ? item.percentage : 0;
     const resetsAt = extractResetTime(item.nextResetTime);
-    tiers.push(makeTier(name, utilization, resetsAt));
+
+    // GLM 可能返回多个 TOKENS_LIMIT：第一个是 5 小时用量，后续按周用量处理
+    const tierName = tokensLimitCount === 0 ? "five_hour" : "weekly_limit";
+    tokensLimitCount += 1;
+
+    tiers.push(makeTier(tierName, utilization, resetsAt));
   }
 
   if (tiers.length === 0) throw new Error("未识别到可用额度信息");
