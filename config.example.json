@@ -1,0 +1,34 @@
+{
+  "accounts": [
+    {
+      "name": "GLM 主账号",
+      "provider": "glm",
+      "baseUrl": "https://open.bigmodel.cn",
+      "apiKey": "your-glm-api-key"
+    },
+    {
+      "name": "GLM 国际站",
+      "provider": "glm",
+      "baseUrl": "https://api.z.ai",
+      "apiKey": "your-glm-api-key"
+    },
+    {
+      "name": "Kimi For Coding",
+      "provider": "kimi",
+      "baseUrl": "https://api.kimi.com/coding",
+      "apiKey": "your-kimi-api-key"
+    },
+    {
+      "name": "MiniMax 中国站",
+      "provider": "minimax-cn",
+      "baseUrl": "https://api.minimaxi.com",
+      "apiKey": "your-minimax-api-key"
+    },
+    {
+      "name": "MiniMax 国际站",
+      "provider": "minimax-en",
+      "baseUrl": "https://api.minimax.io",
+      "apiKey": "your-minimax-api-key"
+    }
+  ]
+}

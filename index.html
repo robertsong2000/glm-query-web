@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Token Plan 用量查询</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Token Plan 用量查询</h1>
+      <p class="subtitle">参考 cc-switch 实现，查询 GLM / Kimi / MiniMax 的 5 小时与周用量额度</p>
+    </header>
+
+    <main class="card">
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="single" role="tab" aria-selected="true">单个查询</button>
+        <button type="button" class="tab" data-tab="batch" role="tab" aria-selected="false">批量查询</button>
+      </div>
+
+      <section id="single-panel" class="tab-panel active">
+        <form id="query-form" class="form">
+          <div class="field-group">
+            <label for="provider">供应商</label>
+            <select id="provider" name="provider" required>
+              <option value="glm">智谱 GLM（open.bigmodel.cn / api.z.ai）</option>
+              <option value="kimi">Kimi For Coding（api.kimi.com）</option>
+              <option value="minimax-cn">MiniMax 中国站（api.minimaxi.com）</option>
+              <option value="minimax-en">MiniMax 国际站（api.minimax.io）</option>
+            </select>
+            <span class="hint">选择供应商后自动使用对应接口与鉴权方式</span>
+          </div>
+
+          <div class="field-group">
+            <label for="api-key">API Key</label>
+            <input
+              id="api-key"
+              name="apiKey"
+              type="password"
+              placeholder="请输入 API Key"
+              required
+              autocomplete="off"
+            />
+            <span class="hint">密钥仅用于本次查询，不会上传到任何第三方服务器</span>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="test-key-btn">
+              <span class="btn-text">检测 API Key</span>
+              <span class="spinner hidden" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div id="key-test-result" class="key-test-result hidden">
+            <div class="key-test-header">
+              <h3>Key 检测结果</h3>
+              <span id="key-test-status" class="key-test-status"></span>
+            </div>
+            <div id="key-test-detail" class="key-test-detail"></div>
+          </div>
+
+          <div class="field-group advanced">
+            <label for="endpoint">查询接口（高级）</label>
+            <input
+              id="endpoint"
+              name="endpoint"
+              type="text"
+              value="https://api.z.ai/api/monitor/usage/quota/limit"
+            />
+          </div>
+
+          <button type="submit" class="btn-primary" id="submit-btn">
+            <span class="btn-text">查询用量</span>
+            <span class="spinner hidden" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div id="result-area" class="result-area hidden">
+          <div class="result-header">
+            <h2>查询结果</h2>
+            <span id="query-time" class="query-time"></span>
+          </div>
+          <div id="tier-list" class="tier-list"></div>
+        </div>
+      </section>
+
+      <section id="batch-panel" class="tab-panel">
+        <div id="auto-config-status" class="auto-config-status hidden"></div>
+
+        <form id="batch-form" class="form">
+          <div class="field-group">
+            <label for="config-file">配置文件（JSON）</label>
+            <div class="file-input-wrapper">
+              <input
+                id="config-file"
+                name="configFile"
+                type="file"
+                accept=".json,application/json"
+              />
+              <label for="config-file" class="file-input-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>选择文件</span>
+              </label>
+              <span id="config-file-name" class="file-input-name">未选择文件</span>
+            </div>
+            <span class="hint">支持 GLM、Kimi、MiniMax；格式见 <a href="./config.example.json" target="_blank">config.example.json</a>。如目录下存在 <code>config.json</code>，会自动加载。</span>
+          </div>
+
+          <div class="field-group advanced">
+            <label for="batch-endpoint">查询接口（高级）</label>
+            <input
+              id="batch-endpoint"
+              name="batchEndpoint"
+              type="text"
+              value="https://api.z.ai/api/monitor/usage/quota/limit"
+            />
+          </div>
+
+          <button type="submit" class="btn-primary" id="batch-submit-btn">
+            <span class="btn-text">批量查询</span>
+            <span class="spinner hidden" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div id="batch-result-area" class="result-area hidden">
+          <div class="result-header">
+            <h2>批量查询结果</h2>
+            <span id="batch-query-time" class="query-time"></span>
+          </div>
+          <div id="batch-result-list" class="batch-result-list"></div>
+        </div>
+      </section>
+
+      <div id="error-area" class="error-area hidden" role="alert"></div>
+    </main>
+
+    <footer class="footer">
+      <p>
+        数据来自 GLM / Kimi / MiniMax 官方 API · 若浏览器拦截跨域请求，可使用
+        <code>node server.mjs</code> 启动本地代理服务后访问
+      </p>
+    </footer>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
