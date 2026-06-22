@@ -21,7 +21,9 @@ glm-query-web/
 ├── index.html            # 页面入口
 ├── style.css             # 样式
 ├── app.js                # 查询逻辑
-├── server.mjs            # 本地代理服务（可选）
+├── server.mjs            # 本地代理服务
+├── Dockerfile            # Docker 镜像构建
+├── docker-compose.yml    # Docker Compose 配置
 ├── config.example.json   # 批量查询配置示例
 ├── config.json           # 真实配置文件（从示例复制，勿提交到 Git）
 ├── .gitignore            # Git 忽略规则
@@ -46,6 +48,23 @@ node server.mjs
 然后打开 http://localhost:3456 即可使用。
 
 本地服务会根据前端请求的 `X-Target-Host` 头，把 API 请求转发到对应的官方域名（`api.z.ai`、`api.kimi.com`、`api.minimaxi.com`、`api.minimax.io`），从而绕过浏览器跨域限制。
+
+### 方式三：Docker 运行
+
+```bash
+cd glm-query-web
+cp config.example.json config.json
+# 编辑 config.json 填入真实 API Key
+docker-compose up -d
+```
+
+然后打开 http://localhost:3456。
+
+`config.json` 通过 volume 挂载到容器，修改后无需重建镜像。停止服务：
+
+```bash
+docker-compose down
+```
 
 ### API Key 检测
 

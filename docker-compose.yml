@@ -1,0 +1,10 @@
+services:
+  glm-query-web:
+    build: .
+    container_name: glm-query-web
+    ports:
+      - "3456:3456"
+    volumes:
+      # 挂载本地 config.json，避免把真实 API Key 打包进镜像
+      - ./config.json:/app/config.json:ro
+    restart: unless-stopped
